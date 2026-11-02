@@ -5,12 +5,12 @@
 <title>Free Subnautica Map, Navigation &amp; Resource Guide | Naut Nav</title>
 <meta name="description" content="Explore the original Subnautica with Naut Nav: a free fan-made navigation planner, biome and landmark guide, resource locations, creature survival tips and expedition progress tracker.">
 <meta name="robots" content="index,follow,max-image-preview:large">
-<link rel="canonical" href="https://nautnav.online/">
+<link rel="canonical" href="https://subnautica-navigator.vercel.app/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Naut Nav">
 <meta property="og:title" content="Naut Nav – Free Subnautica Navigation &amp; Survival Companion">
 <meta property="og:description" content="Plan routes, find resources, explore biomes, learn creature behaviour and track your original Subnautica expedition. Free fan-made companion.">
-<meta property="og:url" content="https://nautnav.online/">
+<meta property="og:url" content="https://subnautica-navigator.vercel.app/">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Naut Nav – Subnautica Navigation Companion">
 <meta name="twitter:description" content="Free Subnautica route planner, resource guide, creature tips and expedition tracker.">
@@ -20,7 +20,7 @@
   "@type": "WebSite",
   "name": "Naut Nav",
   "alternateName": "Subnautica Navigator",
-  "url": "https://nautnav.online/",
+  "url": "https://subnautica-navigator.vercel.app/",
   "description": "A free independent fan-made companion for the original Subnautica, with navigation planning, biome and landmark information, resource guidance, creature survival tips and a local expedition tracker."
 }
 </script>
@@ -40,8 +40,10 @@ section.page{display:none}section.page.active{display:block}.sectionhead{margin:
 .card h3{margin:0 0 5px;font-size:17px}.card p{margin:6px 0}.card ul{padding-left:19px;margin:7px 0}.card li{margin:4px 0}
 .field{margin:10px 0}.result{padding:14px;background:#061c20;border:1px solid var(--line);border-radius:10px;margin-top:12px}.compass{font-size:25px;color:var(--aqua);font-weight:700}
 .filters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.resource{display:flex;flex-direction:column;gap:4px}.resource .where{color:var(--aqua);font-weight:650}.resource small{color:var(--muted)}
-.checklist{display:grid;gap:8px;margin-top:10px}.checkrow{display:flex;align-items:flex-start;gap:9px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#061c20}.checkrow input{width:18px;height:18px;accent-color:#62e5d1;flex:none;margin:2px 0 0}.checkrow span{font-size:14px}.checkrow.done span{color:var(--muted);text-decoration:line-through}.checklist-empty{color:var(--muted);font-size:13px}\nfooter{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
-.resource-visual{height:96px;border:1px solid var(--line);border-radius:11px;background:radial-gradient(circle at 50% 45%,#1b6570,#0a3037 62%,#061c20);display:grid;place-items:center;margin:-2px -2px 10px;overflow:hidden}.resource-visual span{font-size:48px;filter:drop-shadow(0 5px 8px #0008)}\n@media(max-width:650px){.settings,.grid{grid-template-columns:1fr}.hero{padding:18px}.wide{grid-column:auto}}
+.checklist{display:grid;gap:8px;margin-top:10px}.checkrow{display:flex;align-items:flex-start;gap:9px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#061c20}.checkrow input{width:18px;height:18px;accent-color:#62e5d1;flex:none;margin:2px 0 0}.checkrow span{font-size:14px}.checkrow.done span{color:var(--muted);text-decoration:line-through}.checklist-empty{color:var(--muted);font-size:13px}
+footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
+.resource-visual{height:96px;border:1px solid var(--line);border-radius:11px;background:radial-gradient(circle at 50% 45%,#1b6570,#0a3037 62%,#061c20);display:grid;place-items:center;margin:-2px -2px 10px;overflow:hidden}.resource-visual span{font-size:48px;filter:drop-shadow(0 5px 8px #0008)}
+@media(max-width:650px){.settings,.grid{grid-template-columns:1fr}.hero{padding:18px}.wide{grid-column:auto}}
 </style>
 <style>
 .donation-nudge{position:fixed;right:16px;bottom:16px;z-index:20;width:min(330px,calc(100vw - 32px));background:#0b282d;border:1px solid #62e5d1;border-radius:14px;padding:14px 42px 14px 15px;box-shadow:0 12px 38px #0009}.donation-nudge p{margin:5px 0;color:var(--muted);font-size:13px}.donation-nudge strong{color:var(--aqua)}.donation-nudge .dismiss{position:absolute;right:9px;top:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer}.donation-nudge a{color:var(--aqua);font-weight:650}.feedback{margin:18px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}.feedback h2{margin:0 0 4px}.feedback p{color:var(--muted);margin:4px 0 12px}.feedback label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.feedback input,.feedback select,.feedback textarea{width:100%;background:#061c20;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit}.feedback textarea{min-height:110px;resize:vertical}.feedback button{margin-top:12px}.feedback .status{font-size:13px;margin-top:9px}
