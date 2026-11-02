@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#061c20">
+<title>Subnautica Navigator</title>
+<style>
+:root{--bg:#061c20;--panel:#0b282d;--panel2:#10353a;--line:#1e5960;--aqua:#62e5d1;--blue:#6bb9e8;--text:#e5f7f3;--muted:#9abbb7;--warn:#ffca75;--red:#ff817d;--green:#8ce2a9}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 75% -20%,#14505a 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+header{padding:18px max(16px,calc((100vw - 1100px)/2));border-bottom:1px solid var(--line);background:#06191ddd;position:sticky;top:0;z-index:5;backdrop-filter:blur(12px)}
+.brand{display:flex;align-items:center;gap:12px}.mark{width:42px;height:42px;border:1px solid var(--aqua);border-radius:50%;display:grid;place-items:center;color:var(--aqua);font-size:23px;box-shadow:0 0 22px #62e5d133}
+h1{font-size:20px;margin:0;letter-spacing:.08em;text-transform:uppercase}header p{margin:2px 0 0;color:var(--muted);font-size:12px}
+main{max-width:1100px;margin:auto;padding:18px 16px 60px}.hero{padding:22px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(120deg,#0e3438,#0a242b);margin-bottom:16px}.eyebrow{font-size:11px;letter-spacing:.16em;color:var(--aqua);text-transform:uppercase}.hero h2{font-size:clamp(24px,5vw,36px);line-height:1.1;margin:8px 0}.hero p{color:var(--muted);margin:0}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}.setting,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}.setting label,.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}.setting select,.field select,.field input{width:100%;background:#061c20;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit}
+.toggleline{display:flex;align-items:center;justify-content:space-between;gap:12px}.toggleline strong{display:block}.toggleline small{color:var(--muted)}
+.switch{position:relative;width:54px;height:30px;flex:none}.switch input{opacity:0;width:0;height:0}.track{position:absolute;inset:0;border-radius:30px;background:#34545a;transition:.2s;cursor:pointer}.track:before{content:"";position:absolute;width:22px;height:22px;left:4px;top:4px;border-radius:50%;background:#fff;transition:.2s}.switch input:checked+.track{background:#16866f}.switch input:checked+.track:before{transform:translateX(24px)}
+nav{display:flex;gap:8px;overflow:auto;padding:4px 0 12px;margin-bottom:10px}nav button,.chip,.action{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 13px;border-radius:999px;white-space:nowrap;font:inherit;cursor:pointer}nav button.active,.chip.active,.action.primary{background:#12534f;border-color:var(--aqua);color:#fff}
+section.page{display:none}section.page.active{display:block}.sectionhead{margin:8px 0 14px}.sectionhead h2{margin:0;font-size:23px}.sectionhead p{color:var(--muted);margin:3px 0}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.wide{grid-column:1/-1}.muted{color:var(--muted)}.tag{display:inline-block;border:1px solid var(--line);border-radius:99px;padding:2px 8px;color:var(--aqua);font-size:11px;margin:2px 4px 2px 0}.warning{color:var(--warn)}.danger{color:var(--red)}.good{color:var(--green)}
+.card h3{margin:0 0 5px;font-size:17px}.card p{margin:6px 0}.card ul{padding-left:19px;margin:7px 0}.card li{margin:4px 0}
+.field{margin:10px 0}.result{padding:14px;background:#061c20;border:1px solid var(--line);border-radius:10px;margin-top:12px}.compass{font-size:25px;color:var(--aqua);font-weight:700}
+.filters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.resource{display:flex;flex-direction:column;gap:4px}.resource .where{color:var(--aqua);font-weight:650}.resource small{color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
+@media(max-width:650px){.settings,.grid{grid-template-columns:1fr}.hero{padding:18px}.wide{grid-column:auto}}
+</style>
+</head>
+<body>
+<header><div class="brand"><div class="mark">⌖</div><div><h1>Subnautica Navigator</h1><p>EXPEDITION SUPPORT • ORIGINAL SUBNAUTICA</p></div></div></header>
+<main>
+<div class="hero"><div class="eyebrow">Personal expedition assistant</div><h2>Explore deeper. Get home safely.</h2><p id="welcome">Navigation, discoveries, creature knowledge and survival hints for your underwater adventure.</p></div>
+<div class="settings">
+ <div class="setting"><div class="toggleline"><div><strong>Child-friendly mode</strong><small id="modeText">OFF · Full explanations</small></div><label class="switch" aria-label="Toggle child-friendly mode"><input id="childMode" type="checkbox"><span class="track"></span></label></div><p class="muted" style="font-size:12px;margin:9px 0 0">Makes directions and explanations shorter, clearer and easier to follow.</p></div>
+ <div class="setting"><label for="platform">Playing on</label><select id="platform"><option value="switch">Nintendo Switch</option><option value="playstation">PlayStation</option><option value="xbox">Xbox</option><option value="pc">PC</option></select><p class="muted" style="font-size:12px;margin:8px 0 0">Hints and control notes update for this platform.</p></div>
+</div>
+<nav id="tabs"><button class="active" data-tab="nav">Navigation</button><button data-tab="atlas">World atlas</button><button data-tab="hints">Hints & secrets</button><button data-tab="creatures">Creatures</button><button data-tab="defence">Defence</button><button data-tab="gear">Equipment</button></nav>
+<section id="nav" class="page active">
+ <div class="sectionhead"><h2>Compass route planner</h2><p>Plan a straight-line journey between known places.</p></div>
+ <div class="grid"><div class="card"><h3>Choose your route</h3><div class="field"><label for="from">Start location</label><select id="from"></select></div><div class="field"><label for="to">Destination</label><select id="to"></select></div><button class="action primary" id="routeBtn">Calculate route</button><div id="routeResult" class="result" aria-live="polite">Choose two locations to get a compass direction and distance.</div></div>
+ <div class="card"><h3>How to use directions</h3><p>Use the compass at the top of the game screen. Follow the direction in short stages and check your surroundings often.</p><p class="warning">The game does not show a live GPS position. This planner uses approximate map coordinates and straight-line distance, not a safe route around terrain.</p></div></div>
+</section>
+<section id="atlas" class="page"><div class="sectionhead"><h2>World atlas</h2><p>Starter list of important places in the original Subnautica.</p></div><div id="atlasList" class="grid"></div></section>
+<section id="hints" class="page"><div class="sectionhead"><h2>Hints, resources & secrets</h2><p id="hintIntro">Choose a category and find useful information for your selected platform.</p></div>
+ <div class="filters" id="hintFilters"><button class="chip active" data-filter="resources">Resources</button><button class="chip" data-filter="tips">Useful tips</button><button class="chip" data-filter="controls">Platform controls</button><button class="chip" data-filter="secrets">Secrets & story</button><button class="chip" data-filter="survival">Survival help</button></div>
+ <div class="field"><label for="resourceSearch">Find a resource or hint</label><input id="resourceSearch" placeholder="Try lithium, diamonds, caves, controls..."></div>
+ <div id="hintList" class="grid"></div>
+</section>
+<section id="creatures" class="page"><div class="sectionhead"><h2>Creature field guide</h2><p>Learn what lives in each biome and how to stay safe.</p></div><div id="creatureList" class="grid"></div></section>
+<section id="defence" class="page"><div class="sectionhead"><h2>Defence & escape</h2><p>Most dangerous creatures are best avoided, distracted or escaped from.</p></div><div class="grid">
+ <article class="card"><h3>Seamoth Perimeter Defence</h3><p>Use a short electric shock to make an attacking creature release your Seamoth. A stronger charge uses more power.</p></article>
+ <article class="card"><h3>Stasis Rifle</h3><p>Temporarily freezes many creatures in place. Use the pause to get away rather than staying to fight.</p></article>
+ <article class="card"><h3>Cyclops safety</h3><p>Decoys can distract attackers. Silent running and reduced engine noise can help, but drain power faster.</p></article>
+ <article class="card"><h3>Crabsquid</h3><p>Its electrical pulse can disable nearby electronics. Turn off vehicle lights and move away if it approaches.</p></article>
+ <article class="card"><h3>Warper</h3><p>Can teleport you out of a vehicle. Break line of sight, move away and avoid lingering in its patrol area.</p></article>
+ <article class="card"><h3>Remember</h3><p class="good">Getting away safely is a win. You do not need to defeat every creature.</p></article>
+ </div></section>
+<section id="gear" class="page"><div class="sectionhead"><h2>Equipment guide</h2><p>Useful tools and upgrades for exploring safely.</p></div><div class="grid">
+ <article class="card"><h3>Scanner</h3><p>Scan fragments, creatures and technology to unlock blueprints.</p></article><article class="card"><h3>Repair Tool</h3><p>Repairs damaged vehicles, doors and equipment.</p></article><article class="card"><h3>Laser Cutter</h3><p>Opens sealed doors in some wrecks. Bring spare batteries and check oxygen.</p></article><article class="card"><h3>Radiation Suit</h3><p>Protects you around the Aurora while its radiation hazard is active.</p></article><article class="card"><h3>Seamoth depth upgrades</h3><p>Allow the Seamoth to travel deeper without being crushed. Check the module tier before descending.</p></article><article class="card"><h3>Oxygen tank</h3><p>A higher-capacity tank gives more time underwater. Refill it before exploring caves.</p></article>
+ </div></section>
+</main><footer>SUBNAUTICA NAVIGATOR • Family expedition companion • Information is for the original Subnautica unless a game selector is added later.</footer>
+<script>
+const places=[
+{name:"Lifepod 5",x:0,z:0,desc:"Your starting lifepod in the Safe Shallows."},
+{name:"Lifepod 6",x:356,z:312,desc:"A radio signal location in the Grassy Plateaus area."},
+{name:"Lifepod 3",x:- 座,z:- 座,desc:"Radio signal location. Coordinates need confirmation before route use."},
+{name:"Mountain Island",x:359,z:1037,desc:"Large island with alien structures and caves."},
+{name:"Sunbeam landing site",x:387,z:1113,desc:"The rendezvous point on Mountain Island."},
+{name:"Floating Island",x:-732,z:-1096,desc:"Island with Degasi habitats and useful land resources."},
+{name:"Aurora",x:900,z:200,desc:"Wreck of the crashed ship. Radiation and Reaper danger."},
+{name:"Quarantine Enforcement Platform",x: - 250,z:1030,desc:"Alien facility on Mountain Island."},
+{name:"Giant Cove Tree",x: - 1100,z: - 700,desc:"Landmark deep in the Lost River."},
+{name:"Jellyshroom Cave",x:-250,z: - 300,desc:"Underground cave system with dangerous crabsnakes."}
+];
+const cleanPlaces=places.map(p=>({...p,x:Number.isFinite(p.x)?p.x:0,z:Number.isFinite(p.z)?p.z:0}));
+const resources=[
+{name:"Copper",where:"Limestone outcrops",biome:"Safe Shallows, Kelp Forest, Grassy Plateaus",use:"Wiring, electronics and basic equipment.",tool:"Break limestone outcrops by hand."},
+{name:"Titanium",where:"Metal salvage and limestone outcrops",biome:"Kelp Forest, Safe Shallows and many wreck areas",use:"Building, tools and vehicle parts.",tool:"Pick up metal salvage or break limestone."},
+{name:"Silver",where:"Sandstone outcrops",biome:"Kelp Forest, Grassy Plateaus and caves",use:"Wiring kits and electronics.",tool:"Look for sandstone rocks on the seabed and cave walls."},
+{name:"Gold",where:"Sandstone outcrops",biome:"Kelp Forest, Grassy Plateaus and caves",use:"Electronics and advanced crafting.",tool:"Break sandstone outcrops."},
+{name:"Lead",where:"Sandstone outcrops",biome:"Grassy Plateaus, Kelp Forest and underwater islands",use:"Radiation suit and base building.",tool:"Break sandstone outcrops."},
+{name:"Lithium",where:"Large deposits and shale outcrops",biome:"Mountain Island, Mushroom Forest, Jellyshroom Cave and other deeper areas",use:"Reinforced materials and vehicle upgrades.",tool:"Look around cliffs and cave walls; large deposits need a Prawn drill arm."},
+{name:"Diamond",where:"Shale outcrops",biome:"Mountain Island, Mushroom Forest, Jellyshroom Cave and deeper areas",use:"Laser Cutter and advanced equipment.",tool:"Break shale outcrops; check cave walls and ledges."},
+{name:"Magnetite",where:"Seabed deposits",biome:"Jellyshroom Cave and Mountain Island caves",use:"Advanced electronics and upgrades.",tool:"Look carefully on cave floors and ledges."},
+{name:"Ruby",where:"Red mineral deposits",biome:"Grand Reef, Blood Kelp Zone and Lost River",use:"Aerogel and advanced upgrades.",tool:"Look for red crystal-like deposits; deeper areas need better depth upgrades."},
+{name:"Nickel",where:"Loose deposits",biome:"Lost River",use:"High-level depth upgrades.",tool:"Search the riverbed and ledges in the Lost River."},
+{name:"Kyanite",where:"Large blue crystal deposits",biome:"Inactive Lava Zone and Lava Lakes",use:"Late-game vehicle upgrades.",tool:"Bring a Prawn Suit with a drill arm and deep-depth capability."},
+{name:"Quartz",where:"White crystal chunks",biome:"Safe Shallows, caves and many other biomes",use:"Glass and electronics.",tool:"Look on the seabed, especially around shallow caves."},
+{name:"Uraninite Crystal",where:"Green crystal clusters",biome:"Grand Reef, Blood Kelp and Lost River",use:"Nuclear reactor fuel rods.",tool:"Collect crystal clusters from the seabed."}
+];
+const tips=[
+{name:"Carry spare batteries",body:"Tools and lights use battery power. Bring a spare when exploring wrecks or caves."},
+{name:"Use beacons",body:"Drop a beacon at important caves, wrecks and entrances so you can find them again."},
+{name:"Check oxygen first",body:"Before entering a cave or wreck, make sure your oxygen tank is full and you know the way out."},
+{name:"Scan everything new",body:"Fragments unlock blueprints. Scan unfamiliar technology and creatures when it is safe."},
+{name:"Use the Seaglide",body:"It helps you travel faster and can make escaping danger easier. Watch your oxygen while using it."},
+{name:"Save before risky trips",body:"Save your game before exploring dangerous wrecks, caves or deep areas."}
+];
+const controls={
+switch:["Nintendo Switch controls","Use the in-game controller layout shown in Options > Controls. Button prompts can vary with control settings and updates. This guide does not assume PC keyboard commands work on Switch.","Switch"],
+playstation:["PlayStation controls","Use the controller layout shown in Options > Controls. Check whether button prompts are set to your preferred layout.","PlayStation"],
+xbox:["Xbox controls","Use the controller layout shown in Options > Controls. Button prompts can vary with control settings.","Xbox"],
+pc:["PC controls","Keyboard and mouse controls are configurable in Options > Controls. Console button instructions may not match PC.","PC"]
+};
+const secrets=[
+{name:"Story hint: follow radio signals",body:"Listen to each radio message and check the new marker on your PDA. Some signals lead to lifepods and clues."},
+{name:"Story hint: explore the islands",body:"If you see land through the fog, approach carefully and look for safe places to climb out of the water."},
+{name:"Spoiler warning: alien facilities",body:"The large alien structures are important to the story. Explore them when you have enough supplies and a way back."}
+];
+const survival=[
+{name:"Food and water",body:"Bladderfish can be turned into filtered water. Catch edible fish and cook them when you need food."},
+{name:"Cave safety",body:"Bring a full oxygen tank, a Seaglide and a clear route back. Do not keep exploring when oxygen is low."},
+{name:"Radiation",body:"The Aurora area is dangerous until the radiation problem is dealt with. Use the Radiation Suit while the hazard is active."},
+{name:"Depth limits",body:"Vehicles have crush-depth limits. Upgrade them before exploring deeper zones."}
+];
+let currentFilter="resources";
+const child=document.getElementById("childMode");
+const platform=document.getElementById("platform");
+function friendly(full,simple){return child.checked?simple:full}
+function setMode(){document.getElementById("modeText").textContent=child.checked?"ON · Simple words and step-by-step help":"OFF · Full explanations";document.getElementById("welcome").textContent=child.checked?"Your underwater helper. Pick a place, find a resource and follow one step at a time.":"Navigation, discoveries, creature knowledge and survival hints for your underwater adventure.";renderRoute();renderHints()}
+child.addEventListener("change",setMode);
+document.querySelectorAll("nav button").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll("nav button").forEach(x=>x.classList.toggle("active",x===b));document.querySelectorAll("section.page").forEach(s=>s.classList.toggle("active",s.id===b.dataset.tab));}));
+platform.addEventListener("change",renderHints);
+function direction(dx,dz){let a=Math.atan2(dx,-dz)*180/Math.PI;if(a<0)a+=360;return ["N","NE","E","SE","S","SW","W","NW"][Math.round(a/45)%8]}
+function renderPlaces(){["from","to"].forEach(id=>{document.getElementById(id).innerHTML=cleanPlaces.map((p,i)=>'<option value="'+i+'">'+p.name+'</option>').join("")});document.getElementById("to").selectedIndex=3;document.getElementById("atlasList").innerHTML=cleanPlaces.map(p=>'<article class="card"><h3>'+p.name+'</h3><p>'+p.desc+'</p><span class="tag">Approx. map point</span><small class="muted">X '+p.x+' · Z '+p.z+'</small></article>').join("")}
+function renderRoute(){const a=cleanPlaces[+document.getElementById("from").value],b=cleanPlaces[+document.getElementById("to").value];if(!a||!b)return;const dx=b.x-a.x,dz=b.z-a.z,d=Math.round(Math.hypot(dx,dz)),dir=direction(dx,dz);document.getElementById("routeResult").innerHTML=a===b?"Choose a different destination.":'<div class="compass">'+dir+' '+({N:"North",NE:"North-east",E:"East",SE:"South-east",S:"South",SW:"South-west",W:"West",NW:"North-west"}[dir])+'</div><p><strong>'+d+' metres approximately</strong></p><p>'+friendly("Travel in a straight line from "+a.name+" towards "+b.name+".","Start at "+a.name+". Point your compass "+dir+". Keep going towards "+b.name+".")+'</p><small class="muted">Straight-line estimate · X/Z map coordinates · Not a terrain-safe route</small>'}
+document.getElementById("routeBtn").addEventListener("click",renderRoute);document.getElementById("from").addEventListener("change",renderRoute);document.getElementById("to").addEventListener("change",renderRoute);
+function renderHints(){const q=document.getElementById("resourceSearch").value.toLowerCase();let items=[];if(currentFilter==="resources")items=resources.filter(x=>(x.name+" "+x.where+" "+x.biome+" "+x.use).toLowerCase().includes(q)).map(x=>({title:x.name,body:x.use,where:x.where,extra:"Look in: "+x.biome+" · "+x.tool}));if(currentFilter==="tips")items=tips.filter(x=>(x.name+x.body).toLowerCase().includes(q)).map(x=>({title:x.name,body:x.body}));if(currentFilter==="controls"){const c=controls[platform.value];items=[{title:c[0],body:c[1],extra:"Selected platform: "+c[2]}].filter(x=>(x.title+x.body).toLowerCase().includes(q))}if(currentFilter==="secrets")items=secrets.filter(x=>(x.name+x.body).toLowerCase().includes(q)).map(x=>({title:x.name,body:x.body,extra:"Story hint"}));if(currentFilter==="survival")items=survival.filter(x=>(x.name+x.body).toLowerCase().includes(q)).map(x=>({title:x.name,body:x.body}));document.getElementById("hintList").innerHTML=items.length?items.map(x=>'<article class="card resource"><h3>'+x.title+'</h3>'+(x.where?'<div class="where">Found in: '+x.where+'</div>':'')+'<p>'+friendly(x.body,x.body)+'</p>'+(x.extra?'<small>'+x.extra+'</small>':'')+'</article>').join(""):'<div class="card wide">No matches yet. Try another word.</div>';document.getElementById("hintIntro").textContent="Showing "+({switch:"Nintendo Switch",playstation:"PlayStation",xbox:"Xbox",pc:"PC"}[platform.value])+" information for original Subnautica."}
+document.querySelectorAll("[data-filter]").forEach(b=>b.addEventListener("click",()=>{currentFilter=b.dataset.filter;document.querySelectorAll("[data-filter]").forEach(x=>x.classList.toggle("active",x===b));renderHints()}));document.getElementById("resourceSearch").addEventListener("input",renderHints);
+const creatures=[
+["Reaper Leviathan","Crashes through open water and grabs vehicles. Found around the Aurora, Dunes and Mountains.","Keep distance, use cover and escape. Seamoth perimeter defence can make it release a grabbed Seamoth."],
+["Ghost Leviathan","Very dangerous in open deep areas and the Lost River. Juveniles patrol some Lost River sections.","Turn away, use terrain for cover and leave the area. Do not try to fight it."],
+["Sea Dragon Leviathan","Huge predator in the lava zones.","Use the Prawn Suit's movement and nearby cover. Keep moving and retreat if overwhelmed."],
+["Warper","Can teleport divers out of vehicles and attack when you linger nearby.","Break line of sight and move away. Avoid fighting when you can leave."],
+["Crabsquid","Its pulse can disable nearby electronics.","Turn off vehicle lights and move away from its pulse range."],
+["Crabsnake","Hides in Jellyshroom Cave mushrooms and lunges at nearby divers.","Watch mushroom openings and keep moving. Avoid swimming close to its hiding places."],
+["Stalker","Often found in Kelp Forests and may steal metal salvage.","Keep a little distance. You can distract it with scrap metal."],
+["Sand Shark","Burrows in sandy seabeds and ambushes nearby divers.","Listen for its movement and avoid lingering over sandy patches."]
+];
+document.getElementById("creatureList").innerHTML=creatures.map(c=>'<article class="card"><h3>'+c[0]+'</h3><p>'+c[1]+'</p><p><strong class="good">Safer response:</strong> '+c[2]+'</p></article>').join("");
+renderPlaces();renderHints();renderRoute();
+</script>
+</body></html>
