@@ -19,7 +19,7 @@ section.page{display:none}section.page.active{display:block}.sectionhead{margin:
 .card h3{margin:0 0 5px;font-size:17px}.card p{margin:6px 0}.card ul{padding-left:19px;margin:7px 0}.card li{margin:4px 0}
 .field{margin:10px 0}.result{padding:14px;background:#061c20;border:1px solid var(--line);border-radius:10px;margin-top:12px}.compass{font-size:25px;color:var(--aqua);font-weight:700}
 .filters{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.resource{display:flex;flex-direction:column;gap:4px}.resource .where{color:var(--aqua);font-weight:650}.resource small{color:var(--muted)}
-footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
+.checklist{display:grid;gap:8px;margin-top:10px}.checkrow{display:flex;align-items:flex-start;gap:9px;padding:8px 9px;border:1px solid var(--line);border-radius:9px;background:#061c20}.checkrow input{width:18px;height:18px;accent-color:#62e5d1;flex:none;margin:2px 0 0}.checkrow span{font-size:14px}.checkrow.done span{color:var(--muted);text-decoration:line-through}.checklist-empty{color:var(--muted);font-size:13px}\nfooter{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
 .resource-visual{height:96px;border:1px solid var(--line);border-radius:11px;background:radial-gradient(circle at 50% 45%,#1b6570,#0a3037 62%,#061c20);display:grid;place-items:center;margin:-2px -2px 10px;overflow:hidden}.resource-visual span{font-size:48px;filter:drop-shadow(0 5px 8px #0008)}\n@media(max-width:650px){.settings,.grid{grid-template-columns:1fr}.hero{padding:18px}.wide{grid-column:auto}}
 </style>
 <style>
@@ -41,7 +41,17 @@ footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var
  <div class="setting"><div class="toggleline"><div><strong>Child-friendly mode</strong><small id="modeText">OFF · Full explanations</small></div><label class="switch" aria-label="Toggle child-friendly mode"><input id="childMode" type="checkbox"><span class="track"></span></label></div><p class="muted" style="font-size:12px;margin:9px 0 0">Makes directions and explanations shorter, clearer and easier to follow.</p></div>
  <div class="setting"><label for="platform">Playing on</label><select id="platform"><option value="switch">Nintendo Switch</option><option value="playstation">PlayStation</option><option value="xbox">Xbox</option><option value="pc">PC</option></select><p class="muted" style="font-size:12px;margin:8px 0 0">Hints and control notes update for this platform.</p></div>
 </div>
-<nav id="tabs"><button class="active" data-tab="nav">Navigation</button><button data-tab="atlas">World atlas</button><button data-tab="hints">Hints & secrets</button><button data-tab="creatures">Creatures</button><button data-tab="defence">Defence</button><button data-tab="gear">Equipment</button></nav>
+<nav id="tabs"><button class="active" data-tab="nav">Navigation</button><button data-tab="atlas">World atlas</button><button data-tab="hints">Hints & secrets</button><button data-tab="creatures">Creatures</button><button data-tab="defence">Defence</button><button data-tab="gear">Equipment</button><button data-tab="expedition">My expedition</button></nav>
+<section id="expedition" class="page">
+ <div class="sectionhead"><h2>My expedition</h2><p>Your discoveries and checklist save automatically on this device. No account needed.</p></div>
+ <div class="grid">
+  <div class="card wide"><div class="toggleline"><div><h3 style="margin:0">Expedition progress</h3><small id="saveStatus" class="muted">Saved on this device</small></div><strong id="progressCount" class="compass">0%</strong></div><div style="height:10px;background:#061c20;border:1px solid var(--line);border-radius:99px;overflow:hidden;margin-top:12px"><div id="progressBar" style="height:100%;width:0;background:var(--aqua);transition:width .2s"></div></div><p class="muted" style="font-size:12px">Tick off discoveries as you explore. Your progress stays in this browser on this device.</p></div>
+  <div class="card"><h3>Places to discover</h3><div id="placeChecklist" class="checklist"></div></div>
+  <div class="card"><h3>Resources to collect</h3><div id="resourceChecklist" class="checklist"></div></div>
+  <div class="card"><h3>Expedition milestones</h3><div id="milestoneChecklist" class="checklist"></div></div>
+  <div class="card"><h3>Backup & restore</h3><p>Move your progress to another device using a backup file.</p><button class="action primary" id="exportProgress">Download my backup</button><div class="field"><label for="importProgress">Restore a backup file</label><input id="importProgress" type="file" accept="application/json,.json"></div><p id="backupStatus" class="muted" aria-live="polite"></p><button class="action" id="resetProgress">Reset expedition progress</button></div>
+ </div>
+</section>
 <section id="nav" class="page active">
  <div class="sectionhead"><h2>Compass route planner</h2><p>Plan a straight-line journey between known places.</p></div>
  <div class="grid"><div class="card"><h3>Choose your route</h3><div class="field"><label for="from">Start location</label><select id="from"></select></div><div class="field"><label for="to">Destination</label><select id="to"></select></div><button class="action primary" id="routeBtn">Calculate route</button><div id="routeResult" class="result" aria-live="polite">Choose two locations to get a compass direction and distance.</div></div>
@@ -162,6 +172,24 @@ const creatures=[
 ["Sand Shark","Burrows in sandy seabeds and ambushes nearby divers.","Listen for its movement and avoid lingering over sandy patches."]
 ];
 document.getElementById("creatureList").innerHTML=creatures.map(c=>'<article class="card"><h3>'+c[0]+'</h3><p>'+c[1]+'</p><p><strong class="good">Safer response:</strong> '+c[2]+'</p></article>').join("");
+
+const expeditionLists={
+ places:["Lifepod 6","Mountain Island","Floating Island","Aurora","Jellyshroom Cave","Lost River","Giant Cove Tree","Quarantine Enforcement Platform"],
+ resources:["Copper","Silver","Gold","Lead","Lithium","Diamond","Magnetite","Ruby","Nickel Ore","Kyanite","Quartz","Uraninite Crystal"],
+ milestones:["Build a Seaglide","Build a Seamoth","Explore the Aurora","Build a Modification Station","Find a Cyclops fragment","Build a Prawn Suit","Reach the Lost River","Discover an alien facility"]
+};
+const expeditionKey="nautnav-expedition-v1";
+let expeditionState={places:[],resources:[],milestones:[]};
+function loadExpedition(){try{const saved=JSON.parse(localStorage.getItem(expeditionKey)||"null");if(saved&&typeof saved==="object"){for(const k of Object.keys(expeditionLists)){if(Array.isArray(saved[k]))expeditionState[k]=saved[k].filter(v=>expeditionLists[k].includes(v));}}}catch(e){document.getElementById("saveStatus").textContent="Local save unavailable in this browser";}}
+function saveExpedition(){try{localStorage.setItem(expeditionKey,JSON.stringify(expeditionState));document.getElementById("saveStatus").textContent="✓ Saved on this device";}catch(e){document.getElementById("saveStatus").textContent="Could not save here — download a backup";}renderExpeditionProgress();}
+function renderExpeditionProgress(){let total=0,done=0;for(const k of Object.keys(expeditionLists)){total+=expeditionLists[k].length;done+=expeditionState[k].length;}const pct=total?Math.round(done/total*100):0;document.getElementById("progressCount").textContent=pct+"%";document.getElementById("progressBar").style.width=pct+"%";}
+function renderChecklist(key,targetId){const target=document.getElementById(targetId);target.innerHTML="";expeditionLists[key].forEach((label,index)=>{const row=document.createElement("label");row.className="checkrow"+(expeditionState[key].includes(label)?" done":"");const box=document.createElement("input");box.type="checkbox";box.checked=expeditionState[key].includes(label);box.addEventListener("change",()=>{if(box.checked&&!expeditionState[key].includes(label))expeditionState[key].push(label);else expeditionState[key]=expeditionState[key].filter(x=>x!==label);row.classList.toggle("done",box.checked);saveExpedition();});const text=document.createElement("span");text.textContent=label;row.append(box,text);target.append(row);});}
+function renderExpedition(){renderChecklist("places","placeChecklist");renderChecklist("resources","resourceChecklist");renderChecklist("milestones","milestoneChecklist");renderExpeditionProgress();}
+document.getElementById("exportProgress").addEventListener("click",()=>{const payload={app:"Naut Nav",version:1,exportedAt:new Date().toISOString(),progress:expeditionState};const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="naut-nav-expedition-backup.json";a.click();URL.revokeObjectURL(url);document.getElementById("backupStatus").textContent="Backup downloaded. Keep it somewhere safe.";});
+document.getElementById("importProgress").addEventListener("change",async e=>{const file=e.target.files&&e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());const incoming=data.progress||data;if(!incoming||typeof incoming!=="object")throw new Error("That file does not look like a Naut Nav backup.");const next={places:[],resources:[],milestones:[]};for(const k of Object.keys(expeditionLists)){if(!Array.isArray(incoming[k]))throw new Error("Backup is missing "+k+" progress.");next[k]=incoming[k].filter(v=>expeditionLists[k].includes(v));}expeditionState=next;saveExpedition();renderExpedition();document.getElementById("backupStatus").textContent="Backup restored successfully on this device.";}catch(err){document.getElementById("backupStatus").textContent=err.message||"Could not read that backup file.";}e.target.value="";});
+document.getElementById("resetProgress").addEventListener("click",()=>{if(!confirm("Reset all saved expedition checklists on this device? This cannot be undone unless you have a backup."))return;expeditionState={places:[],resources:[],milestones:[]};saveExpedition();renderExpedition();document.getElementById("backupStatus").textContent="Expedition progress reset.";});
+loadExpedition();renderExpedition();
+
 renderPlaces();renderHints();renderRoute();
 
 const donationNudge=document.getElementById("donationNudge");
