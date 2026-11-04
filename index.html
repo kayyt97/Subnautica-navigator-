@@ -151,6 +151,7 @@ function setupSpoilerControls(){
       try{const saved=JSON.parse(localStorage.getItem(spoilerKey)||"{}");saved[id]=input.checked;localStorage.setItem(spoilerKey,JSON.stringify(saved));}catch(e){}
     });
   });
+  document.getElementById("routeResult")?.setAttribute("data-spoiler","true");
   document.querySelectorAll("#nav .card p,#atlasList .card p,#atlasList .card small,#atlasList .card .tag,#hintList .card p,#hintList .card small,#hintList .card .where,#hintList .card .tag,#creatureList .card p,#defence .card p,#gear .card p,#expedition .card p").forEach(el=>el.setAttribute("data-spoiler","true"));
 }
 
