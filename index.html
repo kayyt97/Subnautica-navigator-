@@ -44,6 +44,19 @@ section.page{display:none}section.page.active{display:block}.sectionhead{margin:
 footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var(--muted);font-size:12px}
 .resource-visual{height:96px;border:1px solid var(--line);border-radius:11px;background:radial-gradient(circle at 50% 45%,#1b6570,#0a3037 62%,#061c20);display:grid;place-items:center;margin:-2px -2px 10px;overflow:hidden}.resource-visual span{font-size:48px;filter:drop-shadow(0 5px 8px #0008)}
 @media(max-width:650px){.settings,.grid{grid-template-columns:1fr}.hero{padding:18px}.wide{grid-column:auto}}
+
+.spoiler-control{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;padding:10px 12px;background:#0b282d;border:1px solid var(--line);border-radius:11px}
+.spoiler-control strong{display:block;font-size:13px;color:var(--text)}
+.spoiler-control small{display:block;color:var(--muted);font-size:11px}
+.spoiler-switch{position:relative;width:48px;height:27px;flex:none}
+.spoiler-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.spoiler-track{position:absolute;inset:0;border-radius:30px;background:#34545a;cursor:pointer;transition:.2s}
+.spoiler-track:before{content:"";position:absolute;width:19px;height:19px;left:4px;top:4px;border-radius:50%;background:#fff;transition:.2s}
+.spoiler-switch input:checked+.spoiler-track{background:#16866f}
+.spoiler-switch input:checked+.spoiler-track:before{transform:translateX(21px)}
+.spoiler-switch input:focus-visible+.spoiler-track{outline:2px solid var(--aqua);outline-offset:3px}
+.spoilers-hidden [data-spoiler="true"]{display:none!important}
+
 </style>
 <style>
 .donation-nudge{position:fixed;right:16px;bottom:16px;z-index:20;width:min(330px,calc(100vw - 32px));background:#0b282d;border:1px solid #62e5d1;border-radius:14px;padding:14px 42px 14px 15px;box-shadow:0 12px 38px #0009}.donation-nudge p{margin:5px 0;color:var(--muted);font-size:13px}.donation-nudge strong{color:var(--aqua)}.donation-nudge .dismiss{position:absolute;right:9px;top:8px;border:0;background:transparent;color:var(--muted);font-size:22px;cursor:pointer}.donation-nudge a{color:var(--aqua);font-weight:650}.feedback{margin:18px 0;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}.feedback h2{margin:0 0 4px}.feedback p{color:var(--muted);margin:4px 0 12px}.feedback label{display:block;color:var(--muted);font-size:12px;margin:10px 0 5px}.feedback input,.feedback select,.feedback textarea{width:100%;background:#061c20;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:11px;font:inherit}.feedback textarea{min-height:110px;resize:vertical}.feedback button{margin-top:12px}.feedback .status{font-size:13px;margin-top:9px}
@@ -110,6 +123,37 @@ footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var
 
 <div class="donation-nudge" id="donationNudge" role="dialog" aria-label="Keep the guide free"><button class="dismiss" id="dismissDonation" aria-label="Close donation message">×</button><strong>💙 Always free to use</strong><p>Subnautica Navigator will remain completely free. Donations help cover the costs of keeping it running and improving.</p><a href="https://paypal.me/KaraProsser?locale.x=en_GB&amp;country.x=GB" target="_blank" rel="noopener noreferrer">Support the guide if you can</a></div>
 <script>
+
+const spoilerSections=["nav","atlas","hints","creatures","defence","gear","expedition"];
+const spoilerKey="nautnav-spoilers-v1";
+function setupSpoilerControls(){
+  spoilerSections.forEach(id=>{
+    const section=document.getElementById(id);
+    const head=section&&section.querySelector(".sectionhead");
+    if(!section||!head||head.querySelector(".spoiler-control"))return;
+    let show=true;
+    try{const saved=JSON.parse(localStorage.getItem(spoilerKey)||"{}");if(typeof saved[id]==="boolean")show=saved[id];}catch(e){}
+    const control=document.createElement("div");
+    control.className="spoiler-control";
+    const copy=document.createElement("div");
+    copy.innerHTML="<strong>Story & discovery spoilers</strong><small>Show or hide detailed discoveries in this section. Saved on this device.</small>";
+    const label=document.createElement("label");
+    label.className="spoiler-switch";
+    label.setAttribute("aria-label","Show spoilers in "+id+" section");
+    const input=document.createElement("input");
+    input.type="checkbox";input.checked=show;
+    input.setAttribute("aria-label","Show spoilers in "+id+" section");
+    const track=document.createElement("span");track.className="spoiler-track";
+    label.append(input,track);control.append(copy,label);head.append(control);
+    section.classList.toggle("spoilers-hidden",!show);
+    input.addEventListener("change",()=>{
+      section.classList.toggle("spoilers-hidden",!input.checked);
+      try{const saved=JSON.parse(localStorage.getItem(spoilerKey)||"{}");saved[id]=input.checked;localStorage.setItem(spoilerKey,JSON.stringify(saved));}catch(e){}
+    });
+  });
+  document.querySelectorAll("#nav .card p,#atlasList .card p,#atlasList .card small,#atlasList .card .tag,#hintList .card p,#hintList .card small,#hintList .card .where,#hintList .card .tag,#creatureList .card p,#defence .card p,#gear .card p,#expedition .card p").forEach(el=>el.setAttribute("data-spoiler","true"));
+}
+
 const places=[
 {name:"Lifepod 5",x:0,z:0,desc:"Your starting lifepod in the Safe Shallows."},
 {name:"Lifepod 6",x:356,z:312,desc:"A radio signal location in the Grassy Plateaus area."},
@@ -220,6 +264,7 @@ document.getElementById("resetProgress").addEventListener("click",()=>{if(!confi
 loadExpedition();renderExpedition();
 
 renderPlaces();renderHints();renderRoute();
+setupSpoilerControls();
 
 const donationNudge=document.getElementById("donationNudge");
 try{if(sessionStorage.getItem("hideDonationNudge")==="1")donationNudge.hidden=true;}catch(e){}
