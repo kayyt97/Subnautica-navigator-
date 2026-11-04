@@ -125,18 +125,18 @@ footer{border-top:1px solid var(--line);padding:18px;text-align:center;color:var
 <script>
 
 const spoilerSections=["nav","atlas","hints","creatures","defence","gear","expedition"];
-const spoilerKey="nautnav-spoilers-v1";
+const spoilerKey="nautnav-spoilers-v2";
 function setupSpoilerControls(){
   spoilerSections.forEach(id=>{
     const section=document.getElementById(id);
     const head=section&&section.querySelector(".sectionhead");
     if(!section||!head||head.querySelector(".spoiler-control"))return;
-    let show=true;
+    let show=false;
     try{const saved=JSON.parse(localStorage.getItem(spoilerKey)||"{}");if(typeof saved[id]==="boolean")show=saved[id];}catch(e){}
     const control=document.createElement("div");
     control.className="spoiler-control";
     const copy=document.createElement("div");
-    copy.innerHTML="<strong>Story & discovery spoilers</strong><small>Show or hide detailed discoveries in this section. Saved on this device.</small>";
+    copy.innerHTML="<strong>Show spoilers in this section</strong><small>Keep hidden until you switch this on. Your choice saves on this device.</small>";
     const label=document.createElement("label");
     label.className="spoiler-switch";
     label.setAttribute("aria-label","Show spoilers in "+id+" section");
